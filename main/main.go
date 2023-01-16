@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
+	"strangerDB/dbIndexing"
 	"strangerDB/dbService"
 )
 
@@ -16,7 +18,11 @@ func check(e error) {
 func main() {
 	in := bufio.NewReader(os.Stdin)
 	data, err2 := in.ReadBytes('\n')
+	data = data[:len(data)-2]
 	check(err2)
-	dbService.WriteToFile("db/backet", data)
-	dbService.ReadFromFile("db/backet", 0, 3)
+	dbIndexing.AddIndex("chunks/data", string(data))
+	dbService.WriteToFile("chunks/data", data)
+	p := dbIndexing.Index["we"]
+	fmt.Println(p.Offset, p.Size)
+	fmt.Println(string(dbService.ReadFromFile("chunks/data", p.Offset, p.Size)))
 }
