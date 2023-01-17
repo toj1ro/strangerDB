@@ -20,9 +20,14 @@ func main() {
 	data, err2 := in.ReadBytes('\n')
 	data = data[:len(data)-2]
 	check(err2)
-	dbIndexing.AddIndex("chunks/data", string(data))
-	dbService.WriteToFile("chunks/data", data)
+	dbIndexing.AddIndex("chunks/data", data)
+	dbService.WriteRecord("chunks/data", data)
 	p := dbIndexing.Index["we"]
-	fmt.Println(p.Offset, p.Size)
-	fmt.Println(string(dbService.ReadFromFile("chunks/data", p.Offset, p.Size)))
+	fmt.Println(string(dbService.ReadRecord("chunks/data", p.Offset, p.Size)))
+	text, _ := dbService.Read("chunks/data", "FOXICK")
+	fmt.Println(text)
+
 }
+
+//Stividoh
+//[10 208 187 208 190 209 133]

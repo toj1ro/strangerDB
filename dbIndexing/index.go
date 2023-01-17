@@ -19,13 +19,13 @@ func check(e error) {
 	}
 }
 
-func AddIndex(filename string, data string) {
+func AddIndex(filename string, data []byte) {
 	fi, err := os.Stat(filename)
 	check(err)
 	offset := fi.Size()
-	str := strings.Split(data, ":")
+	str := strings.Split(string(data), ":")
 	key := str[0]
-	size := len(data) + 1
+	size := len(data)
 	p := Position{Offset: offset, Size: size}
 	Index[key] = p
 }
