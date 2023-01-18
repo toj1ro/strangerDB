@@ -3,7 +3,7 @@ package dbIndexing
 import (
 	"log"
 	"os"
-	"strings"
+	"strangerDB/dbService"
 )
 
 var Index = make(map[string]Position)
@@ -19,17 +19,12 @@ func check(e error) {
 	}
 }
 
-func AddIndex(filename string, data []byte) {
+func AddIndex(filename string, data dbService.KeyValue) {
 	fi, err := os.Stat(filename)
 	check(err)
 	offset := fi.Size()
-	str := strings.Split(string(data), ":")
-	key := str[0]
-	size := len(data)
+	key := data.Key
+	size := len([]byte(data.Value+data.Key)) + 1
 	p := Position{Offset: offset, Size: size}
 	Index[key] = p
 }
-
-//func GetIndex(key string) Position {
-//
-//}

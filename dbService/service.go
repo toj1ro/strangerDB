@@ -13,6 +13,10 @@ func check(e error) {
 	}
 }
 
+type KeyValue struct {
+	Key, Value string
+}
+
 func ReadRecord(filename string, offset int64, size int) []byte {
 	f, err := os.Open(filename)
 	check(err)
@@ -25,25 +29,31 @@ func ReadRecord(filename string, offset int64, size int) []byte {
 	return bytes[1:]
 }
 
-func WriteRecord(filename string, data []byte) {
+func WriteRecord(filename string, data KeyValue) {
+	var tombstone int8
+	tombstone = 1
 	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, os.ModeAppend)
 	check(err)
 	defer f.Close()
 	sep := []byte("\n")
 	_, err2 := f.Write(sep)
 	check(err2)
-	_, err3 := f.Write([]byte(data))
+	record := data.Key + ":" + data.Value
+	_, err3 := f.Write(append([]byte(record), byte(tombstone)))
 	check(err3)
 }
 
-func DeleteRecord(filename string, data []byte) {
+func DeleteRecord(filename string, data KeyValue) {
+	var tombstone int8
+	tombstone = 0
 	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, os.ModeAppend)
 	check(err)
 	defer f.Close()
-	size := []byte(string(0))
-	_, err2 := f.Write(size)
+	sep := []byte("\n")
+	_, err2 := f.Write(sep)
 	check(err2)
-	_, err3 := f.Write(data)
+	record := data.Key + ":"
+	_, err3 := f.Write(append([]byte(record), byte(tombstone)))
 	check(err3)
 }
 
