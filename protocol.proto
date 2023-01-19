@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "/pr";
+
+package pr;
+
+
+service DB {
+  rpc HandleRequest(Request) returns (Response) {}
+}
+
+message Read{
+  string key = 1;
+}
+message Write{
+  string key = 1;
+  string value = 2;
+}
+
+message  Delete{
+  string key = 1;
+}
+
+message Request {
+  oneof command {
+    Read read = 1;
+    Write write = 2;
+    Delete delete = 3;
+
+  }
+}
+
+
+message Response {
+  string message = 1;
+}

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"google.golang.org/grpc"
 	"log"
-	"strangerDB/dbIndexing"
-	"strangerDB/dbService"
+	"net"
+	"strangerDB/pr"
 )
 
 func check(e error) {
@@ -14,9 +14,12 @@ func check(e error) {
 }
 
 func main() {
-	kv := dbService.KeyValue{Key: "Freeman", Value: "Lox"}
-	dbIndexing.AddIndex("chunks/data", kv)
-	dbService.WriteRecord("chunks/data", kv)
-	p := dbIndexing.Index["Freeman"]
-	fmt.Println(string(dbService.ReadRecord("chunks/data", p.Offset, p.Size)))
+	s := grpc.NewServer()
+	srv := pr.Server{}
+	pr.RegisterDBServer(s, &srv)
+	l, err := net.Listen("tcp", ":8080")
+	check(err)
+	if err := s.Serve(l); err != nil {
+		log.Fatal(err)
+	}
 }
